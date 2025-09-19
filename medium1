@@ -1,0 +1,32 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+df = pd.read_csv("songs.csv")
+
+df.columns = df.columns.str.strip().str.lower()
+
+print(df.head())
+print("Columns:", df.columns.tolist())
+
+df_1 = df[df['rank'] == 1].copy()
+
+df_1['year'] = pd.to_datetime(df_1['date']).dt.year
+df_1['decade'] = (df_1['year'] // 10) * 10
+
+decade_counts = df_1.groupby('decade').size().reset_index(name='count')
+print(decade_counts)
+
+plt.figure(figsize=(10,6))
+sns.barplot(data=decade_counts, x='decade', y='count', palette="viridis")
+plt.title("Number of Billboard #1 Songs per Decade")
+plt.xlabel("Decade")
+plt.ylabel("Number of #1 Songs")
+plt.show()
+
+plt.figure(figsize=(10,6))
+sns.lineplot(data=decade_counts, x='decade', y='count', marker="o")
+plt.title("Trend of Billboard #1 Songs per Decade")
+plt.xlabel("Decade")
+plt.ylabel("Number of #1 Songs")
+plt.show()
